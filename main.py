@@ -28,9 +28,11 @@ for key in gramatica:
 		c=1
 		while stari(s)>=3:
 			i=str(c)
+			offset=len(s)-stari(s)
+			print offset
 			print key+i+s[:2]
-			gramatica.update({key:key+i+s[-2:]})
-			tempg.update({key+i:s[-2:]})
+			gramatica.update({key:key+i+s[2+offset:]})
+			tempg.update({key+i:s[:2+offset]})
 			s = key+i+s[:2]
 			c=c+1
 			print stari(s),s, gramatica, tempg
@@ -39,5 +41,8 @@ print tempg
 gramatica=dict(gramatica.items() + tempg.items())
 print gramatica
 
-print "DONE"
+print "DONE:"
+
+for key,value in gramatica.viewitems():
+	print key+"->"+value
 
