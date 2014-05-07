@@ -56,7 +56,7 @@ for x in gramatica:
 delGram=[]
 newGram=[]
 done=False
-
+print "Gramatica just started:",gramatica
 while not done:
 	print "------------------------START----------------------------"
 	done=True
@@ -97,7 +97,7 @@ print "Gramatica partea 1:",gramatica
 print "DelGram:",delGram
 delGram=[]
 for x in gramatica:
-	if len(x.pleacaIn)==1 and not x.pleacaIn[0]=='*' and x.pleacaIn[0].nume.isupper():
+	if len(x.pleacaIn)==1 and not x.pleacaIn[0]=='*' and x.pleacaIn[0].nume.isupper() and not x.pleacaIn[0]=="S":
 		delGram.append(x)
 		for k in gramatica:
 			if k.pleacaDin==x.pleacaIn[0]:
@@ -108,7 +108,6 @@ for x in gramatica:
 	gramatica=unq(gramatica)
 
 print "Gramatica partea 2:",gramatica
-
 surplus=1
 for x in gramatica:
 	if len(x.pleacaIn)==3:
@@ -119,12 +118,23 @@ for x in gramatica:
 		x.pleacaIn=[newSymb,x.pleacaIn[2]]
 		gramatica.append(newRule)
 
+print "Gramatica partea 3:",gramatica
+newGram=[]
+newRules=[]
 for x in gramatica:
-	for s in x.pleacaIn:
-		if s.nume.islower():
-			gramatica.append(Rule(s.nume.upper(),[Symbol(s.nume.upper()),]))
-			s.nume=s.nume.upper()
+	if len(x.pleacaIn)>1:
+		for s in x.pleacaIn:
+			if s.nume.islower():
+				if not "U"+s.nume.lower() in newRules:
+					newRules.append("U"+s.nume.lower())
+					newGram.append(Rule("U"+s.nume.lower(),[Symbol(s.nume.lower()),]))
+				print "Changed:",s.nume,"to","U"+s.nume.lower()
+				s.nume="U"+s.nume.lower()
 
+
+gramatica=gramatica+newGram
 gramatica=unq(gramatica)
+
+
 print "Gramatica finala:",gramatica
 
