@@ -1,5 +1,6 @@
 from itertools import *
 import copy
+import operator
 
 def unq(seq):
     seen = set()
@@ -56,6 +57,7 @@ for x in gramatica:
 delGram=[]
 newGram=[]
 done=False
+tt=[]
 print "Gramatica just started:",gramatica
 while not done:
 	print "------------------------START----------------------------"
@@ -81,12 +83,14 @@ while not done:
 								i=i+1
 							d=d+1
 						print "Temp final:",temp
-						if not temp:
-							temp=[Symbol('*'),]
-						newGram.append(Rule(z.pleacaDin,temp))
-						delGram.append(z)
-						delGram.append(x)
-						delGram=unq(delGram)
+						if not temp in tt:
+							tt.append(temp)
+							if not temp:
+								temp=[Symbol('*'),]
+							newGram.append(Rule(z.pleacaDin,temp))
+							delGram.append(z)
+							delGram.append(x)
+							delGram=unq(delGram)
 					print x.pleacaDin,">>>>>",z,a,comb
 	gramatica=gramatica+newGram
 	gramatica=[i for i in gramatica if i not in delGram]
@@ -97,7 +101,7 @@ print "Gramatica partea 1:",gramatica
 print "DelGram:",delGram
 delGram=[]
 for x in gramatica:
-	if len(x.pleacaIn)==1 and not x.pleacaIn[0]=='*' and x.pleacaIn[0].nume.isupper() and not x.pleacaIn[0]=="S":
+	if len(x.pleacaIn)==1 and not x.pleacaIn[0]=='*' and x.pleacaIn[0].nume.isupper():
 		delGram.append(x)
 		for k in gramatica:
 			if k.pleacaDin==x.pleacaIn[0]:
@@ -107,17 +111,25 @@ for x in gramatica:
 	gramatica=[i for i in gramatica if i not in delGram]
 	gramatica=unq(gramatica)
 
+sym=dict()
+rl=[]
 print "Gramatica partea 2:",gramatica
 surplus=1
 for x in gramatica:
 	if len(x.pleacaIn)==3:
 		newStr="V"+str(surplus)
-		newSymb=Symbol(newStr)
-		newRule=Rule(newStr,[x.pleacaIn[0],x.pleacaIn[1]])
-		surplus=surplus+1
-		x.pleacaIn=[newSymb,x.pleacaIn[2]]
-		gramatica.append(newRule)
-
+		
+		if x.pleacaIn[0].nume+x.pleacaIn[1].nume in rl:
+			newRule=Rule(sym[x.pleacaIn[0].nume+x.pleacaIn[1].nume],[x.pleacaIn[0],x.pleacaIn[1]])
+			x.pleacaIn=[newSymb,x.pleacaIn[2]]
+		else:
+			newSymb=Symbol(newStr)
+			sym.update({x.pleacaIn[0].nume+x.pleacaIn[1].nume:newStr})
+			rl.append(x.pleacaIn[0].nume+x.pleacaIn[1].nume)
+			newRule=Rule(newStr,[x.pleacaIn[0],x.pleacaIn[1]])
+			surplus=surplus+1
+			x.pleacaIn=[newSymb,x.pleacaIn[2]]
+			gramatica.append(newRule)
 print "Gramatica partea 3:",gramatica
 newGram=[]
 newRules=[]
@@ -134,7 +146,11 @@ for x in gramatica:
 
 gramatica=gramatica+newGram
 gramatica=unq(gramatica)
+	
+gramatica.sort(key=operator.attrgetter("pleacaDin"))
 
+print "Gramatica finala:",gramatica,'\n'
 
-print "Gramatica finala:",gramatica
+for i in gramatica:
+	print i
 
